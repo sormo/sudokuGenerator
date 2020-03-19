@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cassert>
+#include <set>
 
 namespace Sudoku
 {
@@ -22,6 +23,11 @@ namespace Sudoku
             if (col + 1 >= BOARD_SIZE)
                 return { row + 1, 0 };
             return { row, col + 1 };
+        }
+
+        friend bool operator<(const RowCol& l, const RowCol& r) noexcept
+        {
+            return l.row == r.row ? l.col < r.col : l.row < r.row;
         }
     };
 
@@ -73,7 +79,20 @@ namespace Sudoku
         return result;
     }
 
-    bool randomSolveBoard(Board& board, RowCol rowCol = {})
+    void applyConstraints(const Board* constraints, size_t row, size_t col, std::vector<uint8_t>& candidates)
+    {
+        if (!constraints)
+            return;
+
+        if (constraints->at(row)[col] == 0)
+            return;
+
+        auto it = std::find(std::begin(candidates), std::end(candidates), constraints->at(row)[col]);
+        if (it != std::end(candidates))
+            candidates.erase(it);
+    }
+
+    bool solveRandomBoard(Board& board, const Board* constraints = nullptr, RowCol rowCol = {})
     {
         auto [row, col] = rowCol;
         if (row >= BOARD_SIZE)
@@ -81,17 +100,18 @@ namespace Sudoku
 
         if (board[row][col] != 0)
         {
-            return randomSolveBoard(board, rowCol.next());
+            return solveRandomBoard(board, constraints, rowCol.next());
         }
 
         auto candidates = getCandidates(board, row, col);
+        applyConstraints(constraints, row, col, candidates);
         std::shuffle(std::begin(candidates), std::end(candidates), g_mt);
 
         for (auto candidate : candidates)
         {
             board[row][col] = candidate;
 
-            if (randomSolveBoard(board, rowCol.next()))
+            if (solveRandomBoard(board, constraints, rowCol.next()))
                 return true;
 
             // this is important (:
@@ -124,12 +144,12 @@ namespace Sudoku
         }
 
         // find first random solution
-        assert(randomSolveBoard(board));
+        assert(solveRandomBoard(board));
 
         return board;
     }
 
-    size_t getSolutionsInternal(Board& board, std::vector<Board>* solutions, RowCol rowCol)
+    size_t getSolutionsInternal(Board& board, std::vector<Board>* solutions = nullptr, RowCol rowCol = {})
     {
         auto [row, col] = rowCol;
         if (row >= BOARD_SIZE)
@@ -160,38 +180,50 @@ namespace Sudoku
         return count;
     }
 
-    size_t getSolutions(Board& board, std::vector<Board>* solutions)
+    size_t getSolutions(Board& board, std::vector<Board>& solutions)
     {
-        return getSolutionsInternal(board, solutions, {});
+        return getSolutionsInternal(board, &solutions);
     }
 
-    Board generateSudoku(size_t solutions, size_t spaces)
+    Board generateSudoku(size_t spaces)
     {
         auto board = prepareRandomBoard();
         std::uniform_int_distribution<size_t> rand(0, BOARD_SIZE - 1);
-        size_t solutionsCount = 0;
+        Board constraints{};
 
-        Board result = board;
-        do {
-            result = board;
-
-            for (size_t i = 0; i < spaces; ++i)
+        // rows/cols already tried that leads to multiple solution sudoku
+        std::set<RowCol> tried;
+        
+        for (size_t i = 0; i < spaces;)
+        {
+            // get random non-zero tile and column
+            size_t row = rand(g_mt), col = rand(g_mt);
+            while (board[row][col] == 0 || tried.find({row, col}) != std::end(tried))
             {
-                size_t row = rand(g_mt), col = rand(g_mt);
-                while (result[row][col] == 0)
-                {
-                    row = rand(g_mt);
-                    col = rand(g_mt);
-                }
-
-                result[row][col] = 0;
-
-                solutionsCount = getSolutions(result);
-                if (solutionsCount > solutions)
-                    break;
+                row = rand(g_mt);
+                col = rand(g_mt);
             }
-        } while (solutionsCount != solutions);
 
-        return result;
+            constraints[row][col] = board[row][col];
+            board[row][col] = 0;
+
+            // if we solve the board with the constraint, we have introduced
+            // another solution
+            if (solveRandomBoard(board, &constraints))
+            {
+                // revert back
+                board[row][col] = constraints[row][col];
+                constraints[row][col] = 0;
+
+                tried.insert({ row, col });
+            }
+            else
+            {
+                i++;
+                constraints[row][col] = 0;
+            }
+        }
+
+        return board;
     }
 }

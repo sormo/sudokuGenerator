@@ -11,7 +11,7 @@ namespace Sudoku
 
     void printBoard(const Board& board);
 
-    size_t getSolutions(Board& board, std::vector<Board>* solutions = nullptr);
     std::vector<uint8_t> getCandidates(const Board& board, size_t row, size_t column);
-    Board generateSudoku(size_t solutions, size_t spaces);
+    size_t getSolutions(Board& board, std::vector<Board>& solutions);
+    Board generateSudoku(size_t spaces);
 }
