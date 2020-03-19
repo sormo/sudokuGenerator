@@ -70,6 +70,8 @@ namespace Sudoku
 
         // omit the 0 as candidate
         std::vector<uint8_t> result;
+        result.reserve(BOARD_SIZE);
+
         for (size_t i = 1; i < candidates.size(); ++i)
         {
             if (candidates[i])
@@ -185,43 +187,76 @@ namespace Sudoku
         return getSolutionsInternal(board, &solutions);
     }
 
-    Board generateSudoku(size_t spaces)
+    std::vector<RowCol> initializeSpaceCandidates()
     {
-        auto board = prepareRandomBoard();
-        std::uniform_int_distribution<size_t> rand(0, BOARD_SIZE - 1);
+        std::vector<RowCol> result;
+        result.reserve(BOARD_SIZE * BOARD_SIZE);
+
+        for (size_t r = 0; r < BOARD_SIZE; ++r)
+            for (size_t c = 0; c < BOARD_SIZE; ++c)
+                result.push_back({ r, c });
+
+        return result;
+    }
+
+    RowCol acquireRandomSpaceCandidate(std::vector<RowCol>& candidates)
+    {
+        std::uniform_int_distribution<size_t> rand(0, candidates.size() - 1);
+        
+        auto it = std::begin(candidates);
+        std::advance(it, rand(g_mt));
+        
+        auto res = *it;
+        candidates.erase(it);
+        
+        return res;
+    }
+
+    bool removeSpaces(Board& board, size_t spaces)
+    {
+        // create vector of candidates for spaces
+        auto spaceCandidates = initializeSpaceCandidates();
         Board constraints{};
 
-        // rows/cols already tried that leads to multiple solution sudoku
-        std::set<RowCol> tried;
-        
         for (size_t i = 0; i < spaces;)
         {
-            // get random non-zero tile and column
-            size_t row = rand(g_mt), col = rand(g_mt);
-            while (board[row][col] == 0 || tried.find({row, col}) != std::end(tried))
+            if (spaceCandidates.empty())
             {
-                row = rand(g_mt);
-                col = rand(g_mt);
+                // we are not able to create board with spaces
+                return false;
             }
+
+            auto [row, col] = acquireRandomSpaceCandidate(spaceCandidates);
 
             constraints[row][col] = board[row][col];
             board[row][col] = 0;
 
             // if we solve the board with the constraint, we have introduced
             // another solution
-            if (solveRandomBoard(board, &constraints))
+            Board tmp = board;
+            if (solveRandomBoard(tmp, &constraints))
             {
                 // revert back
                 board[row][col] = constraints[row][col];
-                constraints[row][col] = 0;
-
-                tried.insert({ row, col });
             }
             else
             {
                 i++;
-                constraints[row][col] = 0;
             }
+
+            constraints[row][col] = 0;
+        }
+
+        return true;
+    }
+
+    Board generateSudoku(size_t spaces)
+    {
+        Board board = prepareRandomBoard();;
+
+        while (!removeSpaces(board, spaces))
+        {
+            board = prepareRandomBoard();
         }
 
         return board;
