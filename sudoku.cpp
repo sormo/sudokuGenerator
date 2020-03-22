@@ -261,4 +261,57 @@ namespace Sudoku
 
         return board;
     }
+
+    size_t countSpaces(const Board& board)
+    {
+        size_t res = 0;
+
+        for (size_t r = 0; r < Sudoku::BOARD_SIZE; ++r)
+            for (size_t c = 0; c < Sudoku::BOARD_SIZE; ++c)
+                res += board[r][c] == 0 ? 1 : 0;
+
+        return res;
+    }
+
+    std::optional<Board> solveSudoku(const Board& board)
+    {
+        size_t spaces = countSpaces(board);
+        Board solution = board;
+
+        while (spaces != 0)
+        {
+            bool filled = false;
+
+            for (size_t r = 0; r < Sudoku::BOARD_SIZE; ++r)
+            {
+                for (size_t c = 0; c < Sudoku::BOARD_SIZE; ++c)
+                {
+                    if (solution[r][c] != 0)
+                        continue;
+
+                    auto candidates = getCandidates(solution, r, c);
+                    
+                    if (candidates.size() != 1)
+                        continue;
+
+                    solution[r][c] = candidates[0];
+                    spaces--;
+
+                    filled = true;
+                    break;
+                }
+
+                if (filled)
+                    break;
+            }
+
+            if (!filled)
+                break;
+        }
+
+        if (spaces == 0)
+            return solution;
+
+        return std::nullopt;
+    }
 }

@@ -27,12 +27,15 @@ static void BM_GenerateSudoku(benchmark::State& state)
 {
     while (state.KeepRunning())
     {
-        Sudoku::generateSudoku(state.range(0));
+        auto board = Sudoku::generateSudoku(state.range(0));
+
+        while(!Sudoku::solveSudoku(board))
+            board = Sudoku::generateSudoku(state.range(0));
     }
     //state.SetLabel("Solutions(" + std::to_string(solutions) + ") Spaces(" + std::to_string(state.range(0)) + ")");
 }
 //BENCHMARK(BM_GenerateSudoku)->Apply(CustomArguments)->Unit(benchmark::kMicrosecond);
-BENCHMARK(BM_GenerateSudoku)->DenseRange(40, 59)->Unit(benchmark::kMicrosecond);
+BENCHMARK(BM_GenerateSudoku)->DenseRange(45, 55)->Unit(benchmark::kMicrosecond);
 
 BENCHMARK_MAIN();
 
