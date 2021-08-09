@@ -1,11 +1,10 @@
 {
   "context": {
-    "date": "03/22/20 11:54:16",
+    "date": "2021-08-14T10:36:53+02:00",
     "host_name": "SORMO-THINK",
     "executable": "C:\\src\\sudoku-generator\\x64\\Release\\sudoku-generator.exe",
     "num_cpus": 4,
     "mhz_per_cpu": 2893,
-    "cpu_scaling_enabled": false,
     "caches": [
       {
         "type": "Data",
@@ -37,136 +36,18 @@
   },
   "benchmarks": [
     {
-      "name": "BM_GenerateSudoku/45",
-      "run_name": "BM_GenerateSudoku/45",
+      "name": "BM_GenerateSudoku",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "BM_GenerateSudoku",
       "run_type": "iteration",
-      "repetitions": 0,
+      "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 640,
-      "real_time": 1.0712932813476073e+03,
-      "cpu_time": 1.0498046875000000e+03,
-      "time_unit": "us"
-    },
-    {
-      "name": "BM_GenerateSudoku/46",
-      "run_name": "BM_GenerateSudoku/46",
-      "run_type": "iteration",
-      "repetitions": 0,
-      "repetition_index": 0,
-      "threads": 1,
-      "iterations": 747,
-      "real_time": 1.5415788487589841e+03,
-      "cpu_time": 1.4223560910307899e+03,
-      "time_unit": "us"
-    },
-    {
-      "name": "BM_GenerateSudoku/47",
-      "run_name": "BM_GenerateSudoku/47",
-      "run_type": "iteration",
-      "repetitions": 0,
-      "repetition_index": 0,
-      "threads": 1,
-      "iterations": 407,
-      "real_time": 1.4308737101793033e+03,
-      "cpu_time": 1.4204545454545455e+03,
-      "time_unit": "us"
-    },
-    {
-      "name": "BM_GenerateSudoku/48",
-      "run_name": "BM_GenerateSudoku/48",
-      "run_type": "iteration",
-      "repetitions": 0,
-      "repetition_index": 0,
-      "threads": 1,
-      "iterations": 373,
-      "real_time": 1.8558638069239362e+03,
-      "cpu_time": 1.8850536193029491e+03,
-      "time_unit": "us"
-    },
-    {
-      "name": "BM_GenerateSudoku/49",
-      "run_name": "BM_GenerateSudoku/49",
-      "run_type": "iteration",
-      "repetitions": 0,
-      "repetition_index": 0,
-      "threads": 1,
-      "iterations": 320,
-      "real_time": 2.4238703124865424e+03,
-      "cpu_time": 2.3437500000000000e+03,
-      "time_unit": "us"
-    },
-    {
-      "name": "BM_GenerateSudoku/50",
-      "run_name": "BM_GenerateSudoku/50",
-      "run_type": "iteration",
-      "repetitions": 0,
-      "repetition_index": 0,
-      "threads": 1,
-      "iterations": 160,
-      "real_time": 3.7022425000031944e+03,
-      "cpu_time": 3.7109375000000000e+03,
-      "time_unit": "us"
-    },
-    {
-      "name": "BM_GenerateSudoku/51",
-      "run_name": "BM_GenerateSudoku/51",
-      "run_type": "iteration",
-      "repetitions": 0,
-      "repetition_index": 0,
-      "threads": 1,
-      "iterations": 100,
-      "real_time": 7.6658489997498691e+03,
-      "cpu_time": 7.6562500000000000e+03,
-      "time_unit": "us"
-    },
-    {
-      "name": "BM_GenerateSudoku/52",
-      "run_name": "BM_GenerateSudoku/52",
-      "run_type": "iteration",
-      "repetitions": 0,
-      "repetition_index": 0,
-      "threads": 1,
-      "iterations": 112,
-      "real_time": 9.0489392854838770e+03,
-      "cpu_time": 9.0680803571428569e+03,
-      "time_unit": "us"
-    },
-    {
-      "name": "BM_GenerateSudoku/53",
-      "run_name": "BM_GenerateSudoku/53",
-      "run_type": "iteration",
-      "repetitions": 0,
-      "repetition_index": 0,
-      "threads": 1,
-      "iterations": 75,
-      "real_time": 1.5124058666018149e+04,
-      "cpu_time": 1.5208333333333334e+04,
-      "time_unit": "us"
-    },
-    {
-      "name": "BM_GenerateSudoku/54",
-      "run_name": "BM_GenerateSudoku/54",
-      "run_type": "iteration",
-      "repetitions": 0,
-      "repetition_index": 0,
-      "threads": 1,
-      "iterations": 34,
-      "real_time": 3.5213797058745782e+04,
-      "cpu_time": 3.4926470588235294e+04,
-      "time_unit": "us"
-    },
-    {
-      "name": "BM_GenerateSudoku/55",
-      "run_name": "BM_GenerateSudoku/55",
-      "run_type": "iteration",
-      "repetitions": 0,
-      "repetition_index": 0,
-      "threads": 1,
-      "iterations": 14,
-      "real_time": 5.7390578573436607e+04,
-      "cpu_time": 5.6919642857142855e+04,
-      "time_unit": "us"
+      "iterations": 9,
+      "real_time": 2.7715799333527684e+03,
+      "cpu_time": 2.6927083333333335e+03,
+      "time_unit": "ms"
     }
   ]
 }
