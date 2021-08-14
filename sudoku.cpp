@@ -420,15 +420,13 @@ namespace Sudoku
         return result;
     }
 
-    void changeSpace(Board& board, const Board& solution)
+    std::tuple<RowCol, RowCol> changeSpace(Board& board, const Board& solution)
     {
         RowCol space = GetRandomSpaceCell(board);
         RowCol number = GetRandomNumberCell(board);
-
-        board[space.row][space.col] = solution[space.row][space.col];
-
         Board constraints{};
 
+        board[space.row][space.col] = solution[space.row][space.col];
         constraints[number.row][number.col] = board[number.row][number.col];
         board[number.row][number.col] = 0;
 
@@ -436,11 +434,23 @@ namespace Sudoku
         {
             board[number.row][number.col] = constraints[number.row][number.col];
             constraints[number.row][number.col] = 0;
+            board[space.row][space.col] = 0;
 
+            space = GetRandomSpaceCell(board);
             number = GetRandomNumberCell(board);
+
+            board[space.row][space.col] = solution[space.row][space.col];
             constraints[number.row][number.col] = board[number.row][number.col];
             board[number.row][number.col] = 0;
         }
+
+        return { space, number };
+    }
+
+    void changeRevert(RowCol space, RowCol number, Board& board, const Board& solution)
+    {
+        board[number.row][number.col] = solution[number.row][number.col];
+        board[space.row][space.col] = 0;
     }
 
     std::tuple<Board, Board> generateSudoku(size_t spaces)
@@ -473,13 +483,17 @@ namespace Sudoku
             uint32_t numberOfAttempts = 0;
             while (numberOfAttempts < TotalNumberOfAttempts)
             {
-                changeSpace(board, solution);
-                changeSpace(board, solution);
+                auto[space, number] = changeSpace(board, solution);
 
-                difficulty = computeDifficulty(solution, board);
+                auto newDifficulty = computeDifficulty(solution, board);
 
-                if (difficulty >= minDifficulty && difficulty < maxDifficulty)
+                if (newDifficulty >= minDifficulty && newDifficulty < maxDifficulty)
                     return { board, solution };
+
+                if ((difficulty < minDifficulty && newDifficulty < difficulty) || (difficulty > maxDifficulty && newDifficulty > difficulty))
+                    changeRevert(space, number, board, solution);
+                else
+                    difficulty = newDifficulty;
 
                 numberOfAttempts++;
             }
